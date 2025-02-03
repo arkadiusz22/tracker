@@ -10,14 +10,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormRootError,
 } from "./ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useToast } from "@/hooks/use-toast";
 import { authenticate } from "@/actions";
 import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
 
 const FormSchema = z.object({
   username: z.string().min(4, {
@@ -32,11 +31,7 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const { toast } = useToast();
-  const router = useRouter();
   const searchParams = useSearchParams();
-
-  // TODO: ignore cllback url - remove from url in next auth config
   const callbackUrl = searchParams.get("callbackUrl") || "/";
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -52,25 +47,13 @@ export function LoginForm({
     const formData = new FormData();
     formData.append("username", data.username);
     formData.append("password", data.password || "");
+    formData.append("redirectTo", callbackUrl);
 
-    try {
-      const response = await authenticate(formData);
+    const errorMessage = await authenticate(formData);
 
-      if (response.success) {
-        toast({
-          title: response.message,
-        });
-        router.push(callbackUrl);
-      } else {
-        toast({
-          title: response.message,
-        });
-      }
-    } catch (error) {
-      console.log(error);
-      toast({
-        title: "Unable to sign in.",
-        variant: "destructive",
+    if (errorMessage) {
+      form.setError("root", {
+        message: errorMessage,
       });
     }
   }
@@ -112,6 +95,7 @@ export function LoginForm({
                     </FormItem>
                   )}
                 />
+                <FormRootError />
                 <Button type="submit" className="w-full">
                   Login
                 </Button>

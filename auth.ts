@@ -4,6 +4,7 @@ import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
 import path from "path";
 import fs from "fs/promises";
+import bcrypt from "bcrypt";
 
 export type User = {
   id: string;
@@ -26,14 +27,9 @@ export const { auth, signIn, signOut } = NextAuth({
 
           if (!user) return null;
 
-          // TODO: use bcrypt instead of compare
-          // const passwordsMatch = await bcrypt.compare(password, user.password);
+          const passwordsMatch = await bcrypt.compare(password, user.password);
 
-          const passwordsMatch = password === user.password;
-
-          if (passwordsMatch) {
-            return user;
-          }
+          if (passwordsMatch) return user;
         }
 
         return null;

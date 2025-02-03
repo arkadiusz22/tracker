@@ -14,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`bg-muted/50 antialiased`}>
+      <body className={`bg-background antialiased`}>
         {children}
         <Toaster />
       </body>
