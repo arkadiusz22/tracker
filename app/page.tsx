@@ -7,7 +7,9 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { EntriesTable } from "@/components/entries-table";
 import Link from "next/link";
+import { Suspense } from "react";
 
 export default function Home() {
   return (
@@ -27,12 +29,16 @@ export default function Home() {
         <SignOutButton />
       </header>
 
-      <main className="row-start-2 flex flex-wrap items-center self-start sm:items-start">
+      <main className="row-start-2 flex flex-wrap items-center gap-10 self-start sm:items-start">
         <div className="w-full max-w-sm">
           <NewEntryForm />
         </div>
 
-        <div className="w-full max-w-sm"></div>
+        <div className="w-full max-w-sm">
+          <Suspense>
+            <EntriesTable />
+          </Suspense>
+        </div>
       </main>
 
       <footer className="row-start-3 flex w-full items-center justify-center px-4 text-sm">

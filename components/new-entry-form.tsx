@@ -19,6 +19,8 @@ import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "./ui/calendar";
 import { format } from "date-fns";
+import { saveNewEntry } from "@/lib/actions";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   weight: z.number({ required_error: "A weight entry is required" }).positive(),
@@ -28,7 +30,7 @@ const formSchema = z.object({
 });
 
 export function NewEntryForm() {
-  // 1. Define your form.
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,11 +39,31 @@ export function NewEntryForm() {
     },
   });
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const formData = new FormData();
+    formData.append("weight", values.weight.toString());
+    formData.append("date", values.date.toISOString());
+
+    try {
+      const response = await saveNewEntry(formData);
+
+      if (response) {
+        toast({
+          title: "Unable to add new entry.",
+          description: response,
+        });
+      } else {
+        toast({
+          title: "New entry added.",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Something went wrong.",
+        // TODO: fix me - TS error
+        description: error.message,
+      });
+    }
   }
 
   return (
@@ -52,15 +74,18 @@ export function NewEntryForm() {
           name="weight"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Weigth [kg]</FormLabel>
+              <FormLabel>
+                Weight <span className="text-xs text-slate-400">(kg)</span>
+              </FormLabel>
               <FormControl>
                 <Input
                   type="number"
                   {...field}
                   min={0}
+                  max={1000}
                   step={0.1}
                   onChange={(e) => {
-                    field.onChange(parseFloat(e.target.value));
+                    field.onChange(parseFloat(e.target.value) || 0);
                   }}
                 />
               </FormControl>
@@ -80,7 +105,7 @@ export function NewEntryForm() {
                     <Button
                       variant={"outline"}
                       className={cn(
-                        "w-[240px] pl-3 text-left font-normal",
+                        "pl-3 text-left font-normal",
                         !field.value && "text-muted-foreground",
                       )}
                     >
