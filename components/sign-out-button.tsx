@@ -1,6 +1,6 @@
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { Button } from "./ui/button";
-import { signOut } from "@/auth";
+import { signOut } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 export function SignOutButton() {

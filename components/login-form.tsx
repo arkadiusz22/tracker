@@ -15,7 +15,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { authenticate } from "@/actions";
+import { authenticate } from "@/lib/actions";
 import { useSearchParams } from "next/navigation";
 
 const FormSchema = z.object({

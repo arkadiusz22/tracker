@@ -32,7 +32,7 @@ export default function Home() {
           <NewEntryForm />
         </div>
 
-        <div></div>
+        <div className="w-full max-w-sm"></div>
       </main>
 
       <footer className="row-start-3 flex w-full items-center justify-center px-4 text-sm">
