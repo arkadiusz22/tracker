@@ -66,7 +66,7 @@ export function LoginForm({
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="w-2/3 space-y-6"
+              className="w-full space-y-6"
             >
               <div className="flex flex-col gap-6">
                 <FormField

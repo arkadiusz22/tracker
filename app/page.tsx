@@ -13,7 +13,7 @@ import { Suspense } from "react";
 
 export default function Home() {
   return (
-    <div className="grid min-h-screen grid-rows-[20px_1fr_20px] justify-items-center gap-10 p-4">
+    <div className="grid min-h-screen grid-rows-[20px_1fr_20px] justify-items-center p-6">
       <header className="row-start-1 flex w-full items-center justify-between px-4 transition-[width,height] ease-linear">
         <Breadcrumb>
           <BreadcrumbList>
@@ -29,7 +29,7 @@ export default function Home() {
         <SignOutButton />
       </header>
 
-      <main className="row-start-2 flex flex-wrap items-center gap-10 self-start sm:items-start">
+      <main className="row-start-2 flex w-full flex-col items-center gap-10 self-start py-6">
         <div className="w-full max-w-sm">
           <NewEntryForm />
         </div>
