@@ -35,14 +35,23 @@ export function NewEntryForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       weight: 0,
-      date: new Date(),
+      date: new Date(new Date().toISOString().split("T")[0]),
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    const normalizedDate = new Date(
+      Date.UTC(
+        values.date.getFullYear(),
+        values.date.getMonth(),
+        values.date.getDate(),
+      ),
+    );
+    const dateInUTC = normalizedDate.toISOString();
+
     const formData = new FormData();
     formData.append("weight", values.weight.toString());
-    formData.append("date", values.date.toISOString());
+    formData.append("date", dateInUTC);
 
     try {
       const response = await saveNewEntry(formData);

@@ -62,11 +62,13 @@ export async function saveNewEntry(formData: FormData): Promise<string | void> {
     const weight = parseFloat(formData.get("weight") as string);
     const date = new Date(formData.get("date") as string);
 
-    // TODO: handle timezones differences! and errors when dates are close to midnight
+    const dateOnly = new Date(
+      Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()),
+    );
 
     const newEntry: Entry = {
       weight,
-      date: new Date(date.toISOString().split("T")[0]).toISOString(),
+      date: dateOnly.toISOString(),
     };
 
     if (data.some((entry) => entry.date === newEntry.date)) {

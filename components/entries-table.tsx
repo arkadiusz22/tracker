@@ -24,9 +24,10 @@ export async function EntriesTable() {
       </TableHeader>
       <TableBody>
         {entries.map((entry) => {
+          const utcDate = new Date(entry.date);
           return (
             <TableRow key={entry.date}>
-              <TableCell>{format(new Date(entry.date), "PPP")}</TableCell>
+              <TableCell>{format(utcDate, "PPP")}</TableCell>
               <TableCell className="text-right">{entry.weight}</TableCell>
             </TableRow>
           );
