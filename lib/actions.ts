@@ -85,8 +85,12 @@ export async function saveNewEntry(formData: FormData): Promise<string | void> {
     await fs.writeFile(filePath, JSON.stringify(data, null, 2));
 
     revalidatePath("/");
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Failed to add new entry:", error);
-    throw new Error("Failed to add new entry");
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    } else {
+      throw new Error("Failed to add new entry.");
+    }
   }
 }

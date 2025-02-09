@@ -69,8 +69,7 @@ export function NewEntryForm() {
     } catch (error) {
       toast({
         title: "Something went wrong.",
-        // TODO: fix me - TS error
-        description: error.message,
+        description: error instanceof Error ? error.message : undefined,
       });
     }
   }
