@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "./ui/table";
 import { getEntries } from "@/lib/actions";
+import { Dropdown } from "./dropdown";
 
 // TODO: add options to edit and remove existing entries
 
@@ -42,7 +43,10 @@ export async function EntriesTable() {
             return (
               <TableRow key={entry.date}>
                 <TableCell>{format(utcDate, "PPP")}</TableCell>
-                <TableCell className="text-right">{entry.weight}</TableCell>
+                <TableCell className="text-right">{entry.weight} </TableCell>
+                <TableCell className="p-0 text-center">
+                  <Dropdown />
+                </TableCell>
               </TableRow>
             );
           })}
