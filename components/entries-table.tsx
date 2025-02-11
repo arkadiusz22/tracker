@@ -14,7 +14,7 @@ export async function EntriesTable() {
   const entries = await getEntries();
 
   const average =
-    entries.length > 2
+    entries.length >= 2
       ? entries.reduce((acc, { weight }) => acc + weight, 0) / entries.length
       : undefined;
 
@@ -43,7 +43,7 @@ export async function EntriesTable() {
                 <TableCell>{format(utcDate, "PPP")}</TableCell>
                 <TableCell className="text-right">{entry.weight} </TableCell>
                 <TableCell className="p-0 text-center">
-                  <EntryActionsDropdown id={entry.id} />
+                  <EntryActionsDropdown entry={entry} />
                 </TableCell>
               </TableRow>
             );

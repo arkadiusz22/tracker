@@ -99,11 +99,11 @@ export async function addEntry(formData: FormData): Promise<string | void> {
 
 export async function removeEntry(formData: FormData): Promise<void> {
   try {
-    const entryId = formData.get("id") as string;
-
     const filePath = path.join(process.cwd(), "data", "entries.json");
     const fileContents = await fs.readFile(filePath, "utf8");
     const data = JSON.parse(fileContents) as Entry[];
+
+    const entryId = formData.get("id") as string;
 
     const updatedData = data.filter((entry) => entryId !== entry.id);
 
@@ -113,5 +113,42 @@ export async function removeEntry(formData: FormData): Promise<void> {
   } catch (error) {
     console.error("Failed to remove entry:", error);
     throw new Error("Failed to remove entry.");
+  }
+}
+
+export async function updateEntry(formData: FormData): Promise<string | void> {
+  try {
+    const filePath = path.join(process.cwd(), "data", "entries.json");
+    const fileContents = await fs.readFile(filePath, "utf8");
+    const data = JSON.parse(fileContents) as Entry[];
+
+    const entryId = formData.get("id") as string;
+    const weight = parseFloat(formData.get("weight") as string);
+    const date = new Date(formData.get("date") as string);
+
+    const dateOnly = new Date(
+      Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()),
+    );
+
+    const updatedEntry: Entry = {
+      id: entryId,
+      weight,
+      date: dateOnly.toISOString(),
+    };
+
+    const entryDataIndex = data.findIndex((entry) => entryId === entry.id);
+
+    if (entryDataIndex === -1) {
+      return "There is no entry with provided id.";
+    }
+
+    data[entryDataIndex] = updatedEntry;
+
+    await fs.writeFile(filePath, JSON.stringify(data, null, 2));
+
+    revalidatePath("/");
+  } catch (error) {
+    console.error("Failed to update entry:", error);
+    throw new Error("Failed to update entry.");
   }
 }
