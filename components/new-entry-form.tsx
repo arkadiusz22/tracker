@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "./ui/calendar";
 import { format } from "date-fns";
-import { saveNewEntry } from "@/lib/actions";
+import { addEntry } from "@/lib/actions";
 import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
@@ -54,7 +54,7 @@ export function NewEntryForm() {
     formData.append("date", dateInUTC);
 
     try {
-      const response = await saveNewEntry(formData);
+      const response = await addEntry(formData);
 
       if (response) {
         toast({

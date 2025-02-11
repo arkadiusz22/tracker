@@ -6,6 +6,7 @@ import { Entry, User } from "./types";
 import path from "path";
 import fs from "fs/promises";
 import { revalidatePath } from "next/cache";
+import { v4 as uuidv4 } from "uuid";
 
 export async function authenticate(formData: FormData) {
   try {
@@ -53,7 +54,7 @@ export async function getEntries(): Promise<Entry[]> {
   }
 }
 
-export async function saveNewEntry(formData: FormData): Promise<string | void> {
+export async function addEntry(formData: FormData): Promise<string | void> {
   try {
     const filePath = path.join(process.cwd(), "data", "entries.json");
     const fileContents = await fs.readFile(filePath, "utf8");
@@ -67,6 +68,7 @@ export async function saveNewEntry(formData: FormData): Promise<string | void> {
     );
 
     const newEntry: Entry = {
+      id: uuidv4(),
       weight,
       date: dateOnly.toISOString(),
     };
@@ -92,5 +94,24 @@ export async function saveNewEntry(formData: FormData): Promise<string | void> {
     } else {
       throw new Error("Failed to add new entry.");
     }
+  }
+}
+
+export async function removeEntry(formData: FormData): Promise<void> {
+  try {
+    const entryId = formData.get("id") as string;
+
+    const filePath = path.join(process.cwd(), "data", "entries.json");
+    const fileContents = await fs.readFile(filePath, "utf8");
+    const data = JSON.parse(fileContents) as Entry[];
+
+    const updatedData = data.filter((entry) => entryId !== entry.id);
+
+    await fs.writeFile(filePath, JSON.stringify(updatedData, null, 2));
+
+    revalidatePath("/");
+  } catch (error) {
+    console.error("Failed to remove entry:", error);
+    throw new Error("Failed to remove entry.");
   }
 }
