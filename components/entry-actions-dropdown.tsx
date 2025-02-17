@@ -9,30 +9,17 @@ import {
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "./ui/button";
 import { Entry } from "@/lib/types";
-import { removeEntry, updateEntry } from "@/lib/actions";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { useToast } from "@/hooks/use-toast";
+import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useState } from "react";
+import { DeleteDialogContent } from "./delete-dialog-content";
+import { EditDialogContent } from "./edit-dialog-content";
 
 export function EntryActionsDropdown({ entry }: { entry: Entry }) {
   const [openedDialogType, setOpenedDialogType] = useState<
     "edit" | "delete" | null
   >(null);
 
-  const { toast } = useToast();
-
-  const formData = new FormData();
-  formData.append("id", entry.id);
+  const onClose = () => setOpenedDialogType(null);
 
   return (
     <AlertDialog>
@@ -64,81 +51,11 @@ export function EntryActionsDropdown({ entry }: { entry: Entry }) {
       </DropdownMenu>
 
       {openedDialogType === "edit" && (
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Edit entry</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setOpenedDialogType(null)}>
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={async () => {
-                try {
-                  formData.append(
-                    "weight",
-                    (entry.weight + (Math.random() - 0.5) * 5)
-                      .toFixed(2)
-                      .toString(),
-                  );
-                  formData.append("date", entry.date);
-
-                  await updateEntry(formData);
-
-                  toast({
-                    title: "Entry updated.",
-                  });
-                } catch (error) {
-                  toast({
-                    title: "Something went wrong.",
-                    description:
-                      error instanceof Error ? error.message : undefined,
-                  });
-                }
-              }}
-            >
-              Save
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
+        <EditDialogContent entry={entry} onClose={onClose} />
       )}
 
       {openedDialogType === "delete" && (
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete
-              selected entry.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setOpenedDialogType(null)}>
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={async () => {
-                try {
-                  await removeEntry(formData);
-                  toast({
-                    title: "Entry deleted.",
-                  });
-                } catch (error) {
-                  toast({
-                    title: "Something went wrong.",
-                    description:
-                      error instanceof Error ? error.message : undefined,
-                  });
-                }
-              }}
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
+        <DeleteDialogContent entry={entry} onClose={onClose} />
       )}
     </AlertDialog>
   );
